@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Bunga Tunggal dan Majemuk</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+        }
+        h2 {
+            font-weight: bold;
+            color: #333;
+        }
+        .form-control, .form-select {
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            padding: 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        .card {
+            margin-top: 20px;
+            border: none;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+        }
+        .card-body {
+            font-size: 20px;
+            color: #333;
+        }
+        #result {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Kalkulator Bunga Tunggal dan Majemuk</h2>
+        <div class="row">
+            <!-- Form Input -->
+            <div class="col-md-6">
+                <form id="interestForm">
+                    <div class="mb-3">
+                        <label for="principal" class="form-label">Modal Awal (Rp)</label>
+                        <input type="number" class="form-control" id="principal" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rate" class="form-label">Suku Bunga (%)</label>
+                        <input type="number" class="form-control" id="rate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="time" class="form-label">Waktu (tahun)</label>
+                        <input type="number" class="form-control" id="time" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="compoundFrequency" class="form-label">Frekuensi Kompon (per tahun)</label>
+                        <select class="form-select" id="compoundFrequency">
+                            <option value="1">Tahunan</option>
+                            <option value="2">Setengah Tahunan</option>
+                            <option value="4">Triwulanan</option>
+                            <option value="12">Bulanan</option>
+                            <option value="365">Harian</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Jenis Bunga</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="interestType" id="simpleInterest" value="simple" checked>
+                                <label class="form-check-label" for="simpleInterest">Bunga Tunggal</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="interestType" id="compoundInterest" value="compound">
+                                <label class="form-check-label" for="compoundInterest">Bunga Majemuk</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Hitung</button>
+                </form>
+            </div>
+            <!-- Hasil -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Hasil Perhitungan
+                    </div>
+                    <div class="card-body">
+                        <p id="result" class="fs-4">Silakan masukkan nilai dan tekan tombol hitung.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p><center>Copyright &copy; by Naufal Aziz | Moch Dani Ramansyah</center></p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        document.getElementById('interestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value);
+            const time = parseFloat(document.getElementById('time').value);
+            const frequency = parseInt(document.getElementById('compoundFrequency').value);
+            const interestType = document.querySelector('input[name="interestType"]:checked').value;
+            let amount, interest;
+
+            if (interestType === 'simple') {
+                interest = principal * rate * time / 100;
+                amount = principal + interest;
+            } else {
+                amount = principal * Math.pow((1 + (rate / (frequency * 100))), frequency * time);
+                interest = amount - principal;
+            }
+
+            document.getElementById('result').innerHTML = `
+                <strong>Total Bunga:</strong> ${formatCurrency(interest)}<br>
+                <strong>Jumlah Akhir:</strong> ${formatCurrency(amount)}
+            `;
+        });
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 2
+            }).format(amount);
+        }
+    </script>
+</body>
+</html>
